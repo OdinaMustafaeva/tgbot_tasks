@@ -11,23 +11,46 @@ env.read_env()
 BOT_TOKEN = env("BOT_TOKEN")
 pink_translate_bot = telebot.TeleBot(BOT_TOKEN)
 
+country = {'uzbek': 'uz', 'turkey': 'tk', "ukraine": "ug", 'korea': "ko"}
+
+a = []
+
+
+# Keyboard
+def key_button():
+    login_or_sign = ReplyKeyboardMarkup(resize_keyboard=True)
+    for i in country:
+        login_or_sign.add(KeyboardButton(i))
+    return login_or_sign
+
 
 # Star message
 @pink_translate_bot.message_handler(commands=["start"])
 def star_message(message):
-    pink_translate_bot.send_message(message.chat.id, f"Hi {message.from_user.first_name} enter your born year", )
+    pink_translate_bot.send_message(message.chat.id, f"Hi {message.from_user.first_name}", reply_markup=key_button())
     pink_translate_bot.register_next_step_handler(message, get_message)
 
 
 @pink_translate_bot.message_handler(chat_types=['text'])
 def get_message(message):
     try:
-        int(message.text)
-    except Exception:
+        Translator(to_lang=str(country.get(message.text)))
+    except NameError:
         pink_translate_bot.send_message(message.chat.id, f"Some error")
     else:
-        pink_translate_bot.send_message(message.chat.id,
-                                        f" your are  {int(datetime.today().strftime('%Y')) - int(message.text)} years old")
+        pink_translate_bot.send_message(message.chat.id, f"Ok enter text:")
+        a.append(country.get(message.text))
+        pink_translate_bot.register_next_step_handler(message, get_text)
+
+
+@pink_translate_bot.message_handler(chat_types=['text'])
+def get_text(message):
+    lang1 = a[0]
+    lang1_ = Translator(to_lang=str(lang1))
+    list_ = lang1_.translate(message.text)
+    pink_translate_bot.send_message(message.chat.id, f"{list_}")
+    with open("history.csv", "a") as file:
+        file.write(f"\n{message.text},{lang1},{datetime.now()}")
 
 
 if __name__ == '__main__':

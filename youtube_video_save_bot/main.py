@@ -30,19 +30,9 @@ def get_message(message):
     else:
         yt = YouTube(F"{message.text}")
         pink_translate_bot.send_message(message.chat.id,
-                                        f"Good")
+                                        f"good")
 
 
 if __name__ == '__main__':
     pink_translate_bot.infinity_polling()
 
-# def my_label_traslate():
-#     try:
-#         YouTube(f"{entry_text_.get()}").streams.first().download()
-#         yt = YouTube(F"{entry_text_.get()}")
-#         yt.streams
-#     except Exception:
-#         messagebox.showerror("not found", "this link not found")
-#     else:
-#         label_tran_pink = Label(wn, text="Successful", width=20)
-#         label_tran_pink.pack(side=tk.RIGHT, padx=50)
